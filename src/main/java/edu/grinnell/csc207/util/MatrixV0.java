@@ -77,7 +77,7 @@ public class MatrixV0<T> implements Matrix<T> {
      * reasonable bounds.
      */
     public T get(int row, int col) {
-        if (width <= row || height <= col) {
+        if (this.width <= row || this.height <= col) {
             throw new IndexOutOfBoundsException("Out of bounds height or width given");
         } else {
             return matrix[row][col];
@@ -95,7 +95,7 @@ public class MatrixV0<T> implements Matrix<T> {
      * reasonable bounds.
      */
     public void set(int row, int col, T val) {
-        if (width <= row || height <= col) {
+        if (this.width <= row || this.height <= col) {
             throw new IndexOutOfBoundsException("Out of bounds height or width given");
         } else {
             matrix[row][col] = val;
@@ -162,7 +162,7 @@ public class MatrixV0<T> implements Matrix<T> {
         if (this.height < row || row < 0) {
             throw new IndexOutOfBoundsException("Out of bounds row given");
         }
-        if (vals.length != width) {
+        if (vals.length != this.width) {
             throw new ArraySizeException("Improper number of values given");
         } else {
             T[][] insertedMatrix = (T[][]) new Object[++this.height][this.width];
@@ -205,7 +205,7 @@ public class MatrixV0<T> implements Matrix<T> {
         if (this.width < col || col < 0) {
             throw new IndexOutOfBoundsException("Out of bounds row given");
         }
-        if (vals.length != width) {
+        if (vals.length != this.height) {
             throw new ArraySizeException("Improper number of values given");
         } else {
             T[][] insertedMatrix = (T[][]) new Object[++this.height][this.width];
