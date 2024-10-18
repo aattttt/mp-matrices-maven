@@ -13,9 +13,9 @@ public class MatrixV0<T> implements Matrix<T> {
     // | Fields |
     // +--------+
 
-    int height;
-    int width;
-    T def;
+    int heightHolder;
+    int widthHolder;
+    T defHolder;
     T[][] matrix;
 
     // +--------------+------------------------------------------------
@@ -32,17 +32,18 @@ public class MatrixV0<T> implements Matrix<T> {
      * @throws NegativeArraySizeException If either the width or height are
      * negative.
      */
+    @SuppressWarnings("unchecked")
     public MatrixV0(int width, int height, T def) {
         if (width < 0 || height < 0) {
             throw new NegativeArraySizeException("Negative height or width given");
         } else {
-            this.width = width;
-            this.height = height;
-            this.def = def;
-            matrix = (T[][]) new Object[height][width];
+            widthHolder = width;
+            heightHolder = height;
+            defHolder = def;
+            this.matrix = (T[][]) new Object[height][width];
             for (int i = 0; i < height; i++) {
                 for (int j = 0; j < width; j++) {
-                    matrix[i][j] = def;
+                    this.matrix[i][j] = def;
                 }
             }
         }
@@ -77,7 +78,7 @@ public class MatrixV0<T> implements Matrix<T> {
      * reasonable bounds.
      */
     public T get(int row, int col) {
-        if (this.width <= row || this.height <= col) {
+        if (widthHolder <= col || heightHolder <= row) {
             throw new IndexOutOfBoundsException("Out of bounds height or width given");
         } else {
             return matrix[row][col];
@@ -95,7 +96,7 @@ public class MatrixV0<T> implements Matrix<T> {
      * reasonable bounds.
      */
     public void set(int row, int col, T val) {
-        if (this.width <= row || this.height <= col) {
+        if (widthHolder <= col || heightHolder <= row) {
             throw new IndexOutOfBoundsException("Out of bounds height or width given");
         } else {
             matrix[row][col] = val;
@@ -108,7 +109,7 @@ public class MatrixV0<T> implements Matrix<T> {
      * @return the number of rows.
      */
     public int height() {
-        return this.height;   // STUB
+        return heightHolder;   // STUB
     } // height()
 
     /**
@@ -117,7 +118,7 @@ public class MatrixV0<T> implements Matrix<T> {
      * @return the number of columns.
      */
     public int width() {
-        return this.width;   // STUB
+        return widthHolder;   // STUB
     } // width()
 
     /**
@@ -129,21 +130,21 @@ public class MatrixV0<T> implements Matrix<T> {
      * the height.
      */
     public void insertRow(int row) {
-        if (this.height < row || row < 0) {
+        if (heightHolder < row || row < 0) {
             throw new IndexOutOfBoundsException("Out of bounds row given");
         } else {
-            T[][] insertedMatrix = (T[][]) new Object[++this.height][this.width];
+            T[][] insertedMatrix = (T[][]) new Object[heightHolder + 1][widthHolder];
             for (int i = 0; i < row; i++) {
-                System.arraycopy(matrix[i], 0, insertedMatrix[i], 0, this.width);
+                System.arraycopy(matrix[i], 0, insertedMatrix[i], 0, widthHolder);
             }
-            for (int i = 0; i < this.width; i++) {
-                insertedMatrix[row][i] = def;
+            for (int i = 0; i < widthHolder; i++) {
+                insertedMatrix[row][i] = defHolder;
             }
-            for (int i = row; i < this.height; i++) {
-                System.arraycopy(matrix[i], 0, insertedMatrix[++i], 0, this.width);
+            for (int i = row; i < heightHolder; i++) {
+                System.arraycopy(matrix[i], 0, insertedMatrix[i + 1], 0, widthHolder);
             }
             this.matrix = insertedMatrix;
-            this.height++;
+            heightHolder++;
         }
     } // insertRow(int)
 
@@ -159,22 +160,22 @@ public class MatrixV0<T> implements Matrix<T> {
      * width of the matrix.
      */
     public void insertRow(int row, T[] vals) throws ArraySizeException {
-        if (this.height < row || row < 0) {
+        if (heightHolder < row || row < 0) {
             throw new IndexOutOfBoundsException("Out of bounds row given");
         }
-        if (vals.length != this.width) {
+        if (vals.length != widthHolder) {
             throw new ArraySizeException("Improper number of values given");
         } else {
-            T[][] insertedMatrix = (T[][]) new Object[++this.height][this.width];
+            T[][] insertedMatrix = (T[][]) new Object[heightHolder + 1][widthHolder];
             for (int i = 0; i < row; i++) {
-                System.arraycopy(matrix[i], 0, insertedMatrix[i], 0, this.width);
+                System.arraycopy(matrix[i], 0, insertedMatrix[i], 0, widthHolder);
             }
-            System.arraycopy(vals, 0, insertedMatrix[row], 0, this.width);
-            for (int i = row; i < this.height; i++) {
-                System.arraycopy(matrix[i], 0, insertedMatrix[++i], 0, this.width);
+            System.arraycopy(vals, 0, insertedMatrix[row], 0, widthHolder);
+            for (int i = row; i < heightHolder; i++) {
+                System.arraycopy(matrix[i], 0, insertedMatrix[i + 1], 0, widthHolder);
             }
             this.matrix = insertedMatrix;
-            this.height++;
+            heightHolder++;
         }
     } // insertRow(int)
 
@@ -187,7 +188,26 @@ public class MatrixV0<T> implements Matrix<T> {
      * than the width.
      */
     public void insertCol(int col) {
-        // STUB
+        if (widthHolder < col || col < 0) {
+            throw new IndexOutOfBoundsException("Out of bounds row given");
+        } else {
+            T[][] insertedMatrix = (T[][]) new Object[heightHolder][widthHolder + 1];
+            for (int i = 0; i < heightHolder; i++) {
+                for (int j = 0; j < col; j++) {
+                    insertedMatrix[i][j] = matrix[i][j];
+                }
+            }
+            for (int i = 0; i < heightHolder; i++) {
+                insertedMatrix[i][col] = defHolder;
+            }
+            for (int i = 0; i < heightHolder; i++) {
+                for (int j = col; j < widthHolder; j++) {
+                    insertedMatrix[i][j + 1] = matrix[i][j];
+                }
+            }
+            this.matrix = insertedMatrix;
+            widthHolder++;
+        }
     } // insertCol(int)
 
     /**
@@ -202,22 +222,28 @@ public class MatrixV0<T> implements Matrix<T> {
      * height of the matrix.
      */
     public void insertCol(int col, T[] vals) throws ArraySizeException {
-        if (this.width < col || col < 0) {
+        if (widthHolder < col || col < 0) {
             throw new IndexOutOfBoundsException("Out of bounds row given");
         }
-        if (vals.length != this.height) {
+        if (vals.length != heightHolder) {
             throw new ArraySizeException("Improper number of values given");
         } else {
-            T[][] insertedMatrix = (T[][]) new Object[++this.height][this.width];
-            for (int i = 0; i < row; i++) {
-                System.arraycopy(matrix[i], 0, insertedMatrix[i], 0, this.width);
+            T[][] insertedMatrix = (T[][]) new Object[heightHolder][widthHolder + 1];
+            for (int i = 0; i < heightHolder; i++) {
+                for (int j = 0; j < col; j++) {
+                    insertedMatrix[i][j] = matrix[i][j];
+                }
             }
-            System.arraycopy(vals, 0, insertedMatrix[row], 0, this.width);
-            for (int i = row; i < this.height; i++) {
-                System.arraycopy(matrix[i], 0, insertedMatrix[++i], 0, this.width);
+            for (int i = 0; i < heightHolder; i++) {
+                insertedMatrix[i][col] = vals[i];
+            }
+            for (int i = 0; i < heightHolder; i++) {
+                for (int j = col; j < widthHolder; j++) {
+                    insertedMatrix[i][j + 1] = matrix[i][j];
+                }
             }
             this.matrix = insertedMatrix;
-            this.height++;
+            widthHolder++;
         }
     } // insertCol(int, T[])
 
@@ -230,7 +256,19 @@ public class MatrixV0<T> implements Matrix<T> {
      * or equal to the height.
      */
     public void deleteRow(int row) {
-        // STUB
+        if (heightHolder <= row || row < 0) {
+            throw new IndexOutOfBoundsException("Out of bounds row given");
+        } else {
+            T[][] insertedMatrix = (T[][]) new Object[heightHolder - 1][widthHolder];
+            for (int i = 0; i < row; i++) {
+                System.arraycopy(matrix[i], 0, insertedMatrix[i], 0, widthHolder);
+            }
+            for (int i = row; i < (heightHolder - 1); i++) {
+                System.arraycopy(matrix[i + 1], 0, insertedMatrix[i], 0, widthHolder);
+            }
+            this.matrix = insertedMatrix;
+            heightHolder--;
+        }
     } // deleteRow(int)
 
     /**
@@ -242,7 +280,23 @@ public class MatrixV0<T> implements Matrix<T> {
      * than or equal to the width.
      */
     public void deleteCol(int col) {
-        // STUB
+        if (widthHolder <= col || col < 0) {
+            throw new IndexOutOfBoundsException("Out of bounds row given");
+        } else {
+            T[][] insertedMatrix = (T[][]) new Object[heightHolder][widthHolder - 1];
+            for (int i = 0; i < heightHolder; i++) {
+                for (int j = 0; j < col; j++) {
+                    insertedMatrix[i][j] = matrix[i][j];
+                }
+            }
+            for (int i = 0; i < heightHolder; i++) {
+                for (int j = col; j < (widthHolder - 1); j++) {
+                    insertedMatrix[i][j] = matrix[i][j + 1];
+                }
+            }
+            this.matrix = insertedMatrix;
+            widthHolder--;
+        }
     } // deleteCol(int)
 
     /**
@@ -258,8 +312,22 @@ public class MatrixV0<T> implements Matrix<T> {
      * inappropriate.
      */
     public void fillRegion(int startRow, int startCol, int endRow, int endCol,
-            T val) {
-        // STUB
+            T val) { 
+                if (startRow < 0 || startRow >= heightHolder || startRow >= endRow) {
+                    throw new IndexOutOfBoundsException("Out of bounds start row given");
+                } else if (endRow < 0 || endRow > heightHolder) {
+                    throw new IndexOutOfBoundsException("Out of bounds end row given");
+                } else if (startCol < 0 || startCol >= widthHolder || startCol >= endCol) {
+                    throw new IndexOutOfBoundsException("Out of bounds start col given");
+                } else if (endCol < 0 || endCol > widthHolder) {
+                    throw new IndexOutOfBoundsException("Out of bounds end col given");
+                } else {
+                    for (int i = startRow; i < endRow; i++) {
+                        for (int j = startCol; j < endCol; j++) {
+                            matrix[i][j] = val;
+                        }
+                    }
+                }
     } // fillRegion(int, int, int, int, T)
 
     /**
@@ -310,12 +378,12 @@ public class MatrixV0<T> implements Matrix<T> {
      * the hash codes for two equal objects are the same.
      *
      * @return the hash code.
-     */
+     *
     public int hashCode() {
         int multiplier = 7;
-        int code = this.width() + multiplier * this.height();
-        for (int row = 0; row < this.height(); row++) {
-            for (int col = 0; col < this.width(); col++) {
+        int code = widthHolder() + multiplier * heightHolder();
+        for (int row = 0; row < heightHolder(); row++) {
+            for (int col = 0; col < widthHolder(); col++) {
                 T val = this.get(row, col);
                 if (val != null) {
                     // It's okay if the following computation overflows, since
@@ -325,5 +393,5 @@ public class MatrixV0<T> implements Matrix<T> {
             } // for col
         } // for row
         return code;
-    } // hashCode()
+    } // hashCode()*/
 } // class MatrixV0
