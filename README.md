@@ -11,8 +11,7 @@ Authors:
 
 Overview:
 
-PLEASE PROVIDE AN OVERVIEW OF THE PROJECT FOR THOSE WHO MIGHT NOT
-OTHERWISE UNDERSTAND IT.
+This program creates and modifies marticies backed by a 2d array.
 
 ---
 
