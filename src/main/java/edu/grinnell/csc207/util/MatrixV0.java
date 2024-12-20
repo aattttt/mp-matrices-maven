@@ -361,7 +361,7 @@ public class MatrixV0<T> implements Matrix<T> {
           if (i >= startRow && i < endRow && j >= startCol && j < endCol) {
             int deltaI = (startRow + (steps * deltaRow));
             int deltaJ = (startCol + (steps * deltaCol));
-            if (i == deltaI && j == deltaJ){
+            if (i == deltaI && j == deltaJ) {
               steps++;
               matrix[i][j] = val;
             }
@@ -380,7 +380,13 @@ public class MatrixV0<T> implements Matrix<T> {
    * @return a copy of the matrix.
    */
   public Matrix clone() {
-    return this; // STUB
+    MatrixV0<T> clone = new MatrixV0<>(widthHolder, heightHolder, defHolder);
+    for (int i = 0; i < heightHolder; i++) {
+      for (int j = 0; j < widthHolder; j++) {
+        clone.matrix[i][j] = matrix[i][j];
+      }
+    }
+    return clone;
   } // clone()
 
   /**
@@ -392,7 +398,18 @@ public class MatrixV0<T> implements Matrix<T> {
    *         and equal elements; false otherwise.
    */
   public boolean equals(Object other) {
-    return this == other; // STUB
+    Matrix<T> otherMatrix = (Matrix<T>) other;
+    if (otherMatrix.height() != heightHolder || otherMatrix.width() != widthHolder) {
+      return false;
+    }
+    for (int i = 0; i < heightHolder; i++) {
+      for (int j = 0; j < widthHolder; j++) {
+        if (!matrix[i][j].equals(otherMatrix.get(i, j))) {
+          return false;
+        }
+      }
+    }
+    return true;
   } // equals(Object)
 
   /**
